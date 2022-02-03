@@ -1,0 +1,809 @@
+<!DOCTYPE html lang="ko">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="../css/jquery-ui.css" rel="stylesheet" />
+    <link href="../css/jquery-ui.css" rel="stylesheet" />
+    <script>
+      document.write(
+        "<link type='text/css' href='../css/demo.css?version=" +
+          new Date().getTime() +
+          "' rel='stylesheet' />",
+      );
+      //   document.getElementById("video").style.background = "url('cgi-bin/mjpg/video.cgi?channel=1&subtype=2') 50% 50% / contain no-repeat rgb(0, 0, 0)")();
+    </script>
+  </head>
+  <script src="../lib/jquery.js"></script>
+  <script src="../lib/jquery-ui.js"></script>
+  <body>
+    <div class="left">
+      <div id="divPlugin" class="plugin"></div>
+      <!-- <div id="video"></div> -->
+      <fieldset class="login">
+        <legend>Login</legend>
+        <table cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt">IP Address</td>
+            <td>
+              <input
+                id="loginip"
+                type="text"
+                class="txt"
+                value="shc1-3.iptime.org"
+              />
+            </td>
+            <td class="tt">Port</td>
+            <td><input id="port" type="text" class="txt" value="1114" /></td>
+            <tr>
+              <td colspan="4">
+                  <input type="button" value="오픈 등록 모니터" onclick="startRegisterListen()" />
+              </td>
+          </tr>
+          </tr>
+          <tr>
+            <td class="tt">Protocal Type</td>
+            <td colspan="2">
+              <select
+                id="protocolType"
+                class="sel"
+                onchange="changeProtocol(this.value);"
+              >
+                <option value="0">TCP</option>
+                <option value="4">UDP</option>
+                <option value="3">Multicast</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">User Name</td>
+            <td>
+              <input id="username" type="text" class="txt" value="admin" />
+            </td>
+            <td class="tt">Password</td>
+            <td>
+              <input id="password" type="text" class="txt" value="work1801!@" />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">RTSP Port</td>
+            <td colspan="2">
+              <input
+                id="rtspport"
+                type="text"
+                class="txt"
+                value="10000"
+              />(Optional)
+            </td>
+            <td colspan="4">
+              <input
+                type="button"
+                class="btn2"
+                value="Login"
+                onclick="clickLogin();"
+              />
+              <input
+                type="button"
+                class="btn2"
+                value="Logout"
+                onclick="clickLogout();"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Logged in device</td>
+            <td>
+              <select
+                id="ips"
+                class="sel"
+                onchange="switchDeviceInfo(this.value);"
+              ></select>
+            </td>
+            <td class="tt">Channels</td>
+            <td>
+              <select id="channels" class="sel"></select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">WindowNum</td>
+            <td colspan="2">
+              <select
+                id="wndNum"
+                class="sel2"
+                onchange="changeWndNum(this.value);"
+              >
+                <option value="1">1x1</option>
+                <option value="2" selected>2x2</option>
+                <option value="3">3x3</option>
+                <option value="4">4x4</option>
+              </select>
+            </td>
+            <td colspan="4">
+              <input
+                type="button"
+                class="btn3"
+                value="Full Screen"
+                onclick="clickFullScreen();"
+              />
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class="localconfig">
+        <legend>Local Configuration</legend>
+        <table cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt">Play Mode</td>
+            <td>
+              <select id="netsPreach" name="netsPreach" class="sel">
+                <option value="0">Mini Delay</option>
+                <option value="1">Real Time</option>
+                <option value="2">balanced</option>
+                <option value="3">Fluent</option>
+              </select>
+            </td>
+            <td class="tt">Video Size</td>
+            <td>
+              <select id="wndSize" name="wndSize" class="sel">
+                <option value="0">Full</option>
+                <option value="1">4:3</option>
+                <option value="2">16:9</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Rule Info</td>
+            <td>
+              <select id="rulesInfo" name="rulesInfo" class="sel">
+                <option value="1">Enable</option>
+                <option value="0">Disable</option>
+              </select>
+            </td>
+            <td class="tt">Snapshot Format</td>
+            <td>
+              <select
+                id="captureFileFormat"
+                name="captureFileFormat"
+                class="sel"
+              >
+                <option value="0">BMP</option>
+                <option value="1">JEPG</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Record Path</td>
+            <td colspan="3">
+              <input id="LiveRecord" type="text" class="txt3" />&nbsp;<input
+                type="button"
+                class="btn2"
+                value="Browse..."
+                onclick="clickOpenFileDlg('LiveRecord');"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Download Path</td>
+            <td colspan="3">
+              <input id="Download" type="text" class="txt3" />&nbsp;<input
+                type="button"
+                class="btn2"
+                value="Browse..."
+                onclick="clickOpenFileDlg('Download');"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Live Snapshot Path</td>
+            <td colspan="3">
+              <input id="LiveSnapshot" type="text" class="txt3" />&nbsp;<input
+                type="button"
+                class="btn2"
+                value="Browse..."
+                onclick="clickOpenFileDlg('LiveSnapshot');"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Playback Snapshot Path</td>
+            <td colspan="3">
+              <input
+                id="PlaybackPicPath"
+                type="text"
+                class="txt3"
+              />&nbsp;<input
+                type="button"
+                class="btn2"
+                value="Browse..."
+                onclick="clickOpenFileDlg('PlaybackPicPath');"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Playback File Path</td>
+            <td colspan="3">
+              <input
+                id="PlaybackFilePath"
+                type="text"
+                class="txt3"
+              />&nbsp;<input
+                type="button"
+                class="btn2"
+                value="Browse..."
+                onclick="clickOpenFileDlg('playbackFilePath');"
+              />
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class="operate">
+        <legend>Operation Info</legend>
+        <div id="opinfo" class="opinfo"></div>
+      </fieldset>
+    </div>
+    <div class="left">
+      <fieldset class="preview">
+        <legend>Live</legend>
+        <table cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt" colspan="1">Stream Type</td>
+            <td colspan="1">
+              <select
+                id="streamtype"
+                class="sel2"
+                onchange="changeStreamType(this.value);"
+              >
+                <option value="1">Main Stream</option>
+                <option value="2">Second Stream</option>
+              </select>
+            </td>
+            <td colspan="1">
+              <input
+                type="button"
+                class="btn2"
+                value="Start Live"
+                onclick="clickStartRealPlay();"
+              />
+              <input
+                type="button"
+                class="btn2"
+                value="Stop Live"
+                onclick="clickStopRealPlay();"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Audio Talk"
+                onclick="clickStartVoiceTalk();"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Stop Talk"
+                onclick="clickStopVoiceTalk();"
+              />
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class="preview">
+        <legend>AudioVideo Ctrl</legend>
+        <table cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt">
+              <input
+                type="button"
+                class="btn2"
+                value="Enable Sound"
+                onclick="clickOpenSound();"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Disable Sound"
+                onclick="clickCloseSound();"
+              />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Snapshot"
+                onclick="clickCapturePic();"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Start Record"
+                onclick="clickStartRecord();"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Stop Record"
+                onclick="clickStopRecord();"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Enable Enlarge"
+                onclick="clickEnableEZoom();"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="Disable Enlarge"
+                onclick="clickDisableEZoom();"
+              />
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class="ptz">
+        <legend>PTZ</legend>
+        <div id="tabs">
+          <ul>
+            <li><a href="#tabs-1">PTZ Ctrl</a></li>
+            <li><a href="#tabs-2">Preset</a></li>
+            <li><a href="#tabs-3">Track Routes</a></li>
+            <li><a href="#tabs-4">Track Preset</a></li>
+            <li><a href="#tabs-5">Line Scan</a></li>
+            <li><a href="#tabs-6">Pattern</a></li>
+          </ul>
+          <div id="tabs-1">
+            <table cellpadding="0" cellspacing="3" border="0" class="left">
+              <tr>
+                <td>
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Top Left"
+                    onmousedown="mouseUPLeftPTZControl(false);"
+                    onmouseup="mouseUPLeftPTZControl(true);"
+                  />
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Top"
+                    onmousedown="mouseUpPTZControl(false);"
+                    onmouseup="mouseUpPTZControl(true);"
+                  />
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Top Right"
+                    onmousedown="mouseUPRightPTZControl(false);"
+                    onmouseup="mouseUPRightPTZControl(true);"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="button"
+                    class="btn"
+                    value="Left"
+                    onmousedown="mouseLefPTZControl(false);"
+                    onmouseup="mouseLefPTZControl(true);"
+                  />
+                  <input
+                    type="button"
+                    class="btn"
+                    id="openPtzLocate"
+                    value="Enable"
+                    onclick="openPtzLocate();"
+                  />
+                  <input
+                    type="button"
+                    class="btn"
+                    id="closePtzLocate"
+                    value="Disable"
+                    onclick="closePtzLocate();"
+                  />
+                  <input
+                    type="button"
+                    class="btn"
+                    value="Right"
+                    onmousedown="mouseRightPTZControl(false);"
+                    onmouseup="mouseRightPTZControl(true);"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="button"
+                    class="btn3"
+                    value="Bottom Left"
+                    onmousedown="mouseDownLeftPTZControl(false);"
+                    onmouseup="mouseDownLeftPTZControl(true);"
+                  />
+                  <input
+                    type="button"
+                    class="btn3"
+                    value="Bottom"
+                    onmousedown="mouseDownPTZControl(false);"
+                    onmouseup="mouseDownPTZControl(true);"
+                  />
+                  <input
+                    type="button"
+                    class="btn3"
+                    value="Bottom Right"
+                    onmousedown="mouseDownRightPTZControl(false);"
+                    onmouseup="mouseDownRightPTZControl(true);"
+                  />
+                </td>
+              </tr>
+            </table>
+            <table cellpadding="0" cellspacing="3" border="0" class="left">
+              <tr>
+                <td class="tt">Speed</td>
+                <td>
+                  <select id="ptzspeed" class="sel">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+            <table cellpadding="0" cellspacing="3" border="0">
+              <tr>
+                <td class="tt">
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Zoom+"
+                    onmousedown="PTZZoomIn(false)"
+                    onmouseup="PTZZoomIn(true)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Zoom-"
+                    onmousedown="PTZZoomout(false)"
+                    onmouseup="PTZZoomout(true)"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td class="tt">
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Focus+"
+                    onmousedown="PTZFocusIn(false)"
+                    onmouseup="PTZFocusIn(true)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Focus-"
+                    onmousedown="PTZFoucusOut(false)"
+                    onmouseup="PTZFoucusOut(true)"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td class="tt">
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Iris+"
+                    onmousedown="PTZIrisIn(false)"
+                    onmouseup="PTZIrisIn(true)"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Iris-"
+                    onmousedown="PTZIrisOut(false)"
+                    onmouseup="PTZIrisOut(true)"
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div id="tabs-2">
+            <!--
+        <table cellpadding="0" cellspacing="3" border="0" class="left">
+            <tr>
+                <td class="tt">预置点列表</td>
+                <td>
+                    <select id="presetList" class="sel">
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <table cellpadding="0" cellspacing="3" border="0">
+            <tr>
+                <td class="tt"><input type="button" class="btn2" value="获取" onmousedown="GetPresets()"></td>
+                <td><input type="button" class="btn2" value="定位到" onmousedown="GotoPreset()"></td>
+            </tr>
+            <tr>
+                <td class="tt"><input type="button" class="btn2" value="增加" onmousedown="SetPreset()"></td>
+                <td><input type="button" class="btn2" value="删除" onmousedown="RemovePreset()"></td>
+            </tr>
+        </table>
+		<-->
+          </div>
+          <div id="tabs-3">
+            <table cellpadding="0" cellspacing="3" border="0">
+              <tr>
+                <td class="tt">PtzTour</td>
+                <td>
+                  <select id="tourIndex" class="sel">
+                    <option value="1" selected>1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                  </select>
+                </td>
+                <td class="tt">1~8</td>
+                <td class="tt">
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Start"
+                    onmousedown="clickstartTour()"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="button"
+                    class="btn2"
+                    value="Stop"
+                    onmousedown="clickstopTour()"
+                  />
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div id="tabs-4"></div>
+          <div id="tabs-5"></div>
+          <div id="tabs-6"></div>
+        </div>
+      </fieldset>
+      <!-- <fieldset class="playback">
+        <legend>Playback</legend>
+        <table width="100%" cellpadding="0" cellspacing="3" border="0">
+            <tr>
+                <td class="tt">Stream Type</td>
+                <td>
+                    <select id="record_streamtype" class="sel">
+                        <option value="1">Main Stream</option>
+                        <option value="2">Second Stream</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="tt">Start Time</td>
+                <td>
+                    <input id="starttime" type="text" class="txt" value="2018-12-18 00:00:00" />(Format：2018-10-24 12:34:56)
+                </td>
+            </tr>
+            <tr>
+                <td class="tt">Stop Time</td>
+                <td>
+                    <input id="endtime" type="text" class="txt" value="2018-12-18 23:59:59" />
+                    <input type="button" class="btn2" value="Search" onclick="clickRecordSearch(0);" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="searchdiv" class="searchdiv">
+                        <table id="searchlist" class="searchlist" cellpadding="0" cellspacing="0" border="0"></table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" class="btn2" value="Start Play" onclick="clickStartPlayback();" />
+                    <input type="button" class="btn2" value="Stop Play" onclick="clickStopPlayback();" />
+                    <input type="button" class="btn2" value="Backward" onclick="clickReversePlayback();" />
+                    <input type="button" class="btn2" value="Single Frame" onclick="clickFrame();" />
+                    <input id="transstream" type="checkbox" class="vtop" />&nbsp;Enable Stream Convert
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" class="btn2" value="Pause" onclick="clickPause();" />
+                    <input type="button" class="btn2" value="Resume" onclick="clickResume();" />
+                    <input type="button" class="btn2" value="Play Slow" onclick="clickPlaySlow();" />
+                    <input type="button" class="btn2" value="Play Fast" onclick="clickPlayFast();" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" class="btn2" value="Snapshot" onclick="clickCapturePic();" />
+                    <input type="button" class="btn2" value="Start Record" onclick="clickStartRecord('playback');" />
+                    <input type="button" class="btn2" value="Stop Record" onclick="clickStopRecord('playback');" />
+                    <input type="button" class="btn2" value="OSD Time" onclick="clickGetOSDTime();" />&nbsp;<input id="osdtime" type="text" class="txt" readonly />
+                </td>
+            </tr>
+        </table>
+    </fieldset> -->
+      <fieldset class="playback">
+        <legend>People Counting</legend>
+        <table width="100%" cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt">Rule</td>
+            <td>
+              <select id="humanFlowRule" class="sel">
+                <option value="0">Counting In Region</option>
+                <option value="1">People Counting</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Interval</td>
+            <td>
+              <select id="humanFlowGranularity" class="sel">
+                <option value="0">Day</option>
+                <option value="1">Month</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Start Time</td>
+            <td>
+              <input
+                id="humanFlowStarttime"
+                type="text"
+                class="txt"
+                value="2018-11-22 00:00:00"
+              />（Format：2013-11-11 12:34:56）
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Stop Time</td>
+            <td>
+              <input
+                id="humanFlowEndtime"
+                type="text"
+                class="txt"
+                value="2018-11-22 23:59:59"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td class="tt">Stay Time</td>
+            <td>
+              <select id="humanFlowMinStayTime" class="sel">
+                <option value="5">5s</option>
+                <option value="30">30s</option>
+                <option value="60">60s</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input
+                type="button"
+                class="btn3"
+                value="Enable Query"
+                onclick="clickStartTrafficDataQuery();"
+              />
+              Query Handle:<input
+                id="humanFlowQueryHandle"
+                type="text"
+                class="txt"
+                value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input
+                type="button"
+                class="btn3"
+                value="Get All Info"
+                onclick="clickGetTrafficDataTotalCount();"
+              />
+            </td>
+            <td>
+              Info Count<input
+                id="humanFlowInfoCount"
+                type="text"
+                class="txt"
+                value="0"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input
+                type="button"
+                class="btn3"
+                value="Get Query Info"
+                onclick="clickQueryTrafficData();"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input
+                type="button"
+                class="btn3"
+                value="Stop Query"
+                onclick="clickStopTrafficDataQuery();"
+              />
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+      <fieldset class="Thermal">
+        <legend>Thermal</legend>
+        <table cellpadding="0" cellspacing="3" border="0">
+          <tr>
+            <td class="tt">Radiometry</td>
+            <td class="tt">
+              <input
+                type="button"
+                class="btn2"
+                value="开启"
+                onmousedown="clickenableCheck(true)"
+              />
+            </td>
+            <td>
+              <input
+                type="button"
+                class="btn2"
+                value="关闭"
+                onmousedown="clickenableCheck(false)"
+              />
+            </td>
+            <td class="tt">Temper</td>
+            <td colspan="3">
+              <input id="Temper" type="text" class="txt" value="" />
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+    <script src="../module/foundation.js"></script>
+    <script src="../module/WebVideoCtrl.js"></script>
+    <script src="../module/modifyUI.js"></script>
+    <script src="../module/demo.js"></script>
+  </body>
+</html>
